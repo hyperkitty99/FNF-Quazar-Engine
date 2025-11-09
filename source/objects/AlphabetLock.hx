@@ -19,12 +19,13 @@ class AlphabetLock extends Alphabet {
         
         selected = true;
 
-        if (Data.flashingLights) {
-            animTimer = curFrame = 0;
-            applyFrame();
-        } else {
+        if (!Data.flashingLights) {
             lerpTimer = 0;
+            return;
         }
+
+        animTimer = curFrame = 0;
+        applyFrame();
     }
     
     private function applyFrame():Void {
@@ -37,18 +38,18 @@ class AlphabetLock extends Alphabet {
         
         if (!locked || !selected) return;
         
-        if (Data.flashingLights) {
-            animTimer += elapsed;
-            
-            while (animTimer >= frameDuration && curFrame < Constants.LOCK_ANIM_FRAMES.length - 1) {
-                animTimer -= frameDuration;
-                curFrame++;
-                applyFrame();
-            }
+        if (!Data.flashingLights) {
+            lerpTimer += elapsed;
+            color = Util.lerpColor(0xFFFF0000, FlxColor.WHITE, Math.min(lerpTimer * 5, 1));
             return;
         }
 
-        lerpTimer += elapsed;
-        color = Util.lerpColor(0xFFFF0000, FlxColor.WHITE, Math.min(lerpTimer * 5, 1));
+        animTimer += elapsed;
+            
+        while (animTimer >= frameDuration && curFrame < Constants.LOCK_ANIM_FRAMES.length - 1) {
+            animTimer -= frameDuration;
+            curFrame++;
+            applyFrame();
+        }
     }
 }

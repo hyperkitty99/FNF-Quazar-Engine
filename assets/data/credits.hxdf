@@ -1,0 +1,55 @@
+data {
+    credits = [
+        {
+            name: "Quazar Engine Team",
+            credits: [
+                {
+                    name: "NickNGC",
+                    icon: "nickngc",
+                    desc: "Owner, Programmer, Artist, Composer",
+                    link: "x.com/nickngc"
+                }
+            ]
+        },
+        {
+            name: "Funkin' Crew",
+            credits: [
+                {
+                    name: "Phantom Arcade",
+                    icon: "phantomarcade",
+                    desc: "Director, Artist",
+                    link: "x.com/PhantomArcade3K"
+                },
+                {
+                    name: "ninjamuffin99",
+                    icon: "ninjamuffin99",
+                    desc: "Co-Director, Programmer",
+                    link: "x.com/ninja_muffin99"
+                },
+                {
+                    name: "Kawai Sprite",
+                    icon: "kawaisprite",
+                    desc: "Musician",
+                    link: "x.com/kawaisprite"
+                },
+                {
+                    name: "evilsk8r",
+                    icon: "evilsk8r",
+                    desc: "Artist",
+                    link: "x.com/evilsk8r"
+                }
+            ]
+        },
+        {
+            name: "Special Thanks",
+            credits: [
+                {
+                    name: "Cobalt",
+                    icon: "cobalt",
+                    desc: "Helped with programming and inspired me to create this engine!",
+                    link: "github.com/CCobaltDev"
+                }
+            ]
+        }
+    ]
+}
