@@ -15,6 +15,8 @@ class GameOverSubState extends SubScene {
     }
 
     override function create():Void {
+        PlayState.blueballs++;
+
         bgColor = FlxColor.BLACK;
 		game.persistentDraw = false;
 
@@ -46,16 +48,19 @@ class GameOverSubState extends SubScene {
 
     function onBack():Void {
         if (isExiting) return;
-		isExiting = true;
 
+		isExiting = true;
         skipNextTransIn = false;
 
         deathMusic?.stop();
-        FlxG.sound.playMusic(Path.music('freakyMenu'), 0.5);
 
-        FlxG.switchState(GameSession.isStoryMode ? new StoryMenuState() : new FreeplayState());
-
-        GameSession.resetProperties();
+		StickerSubState.preload(PlayState.curSong, character.character);
+		
+        if (PlayState.isStoryMode) {
+			openSubState(new StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+		} else {
+			openSubState(new StickerSubState(null, (sticker) -> new FreeplayState(sticker)));
+		}
     }
 
     function moveCamera():Void {

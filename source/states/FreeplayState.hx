@@ -2,6 +2,7 @@ package states;
 
 import backend.WeekData.SongData;
 import backend.WeekData.DiffData;
+import substates.StickerSubState;
 
 class FreeplayState extends Scene {
 	static var curSelected:Int = 0;
@@ -26,12 +27,33 @@ class FreeplayState extends Scene {
 	var bg:FlxSprite;
 	var colorTween:FlxTween;
 
+	var stickerSubState:StickerSubState;
+
+    public function new(?stickers:StickerSubState = null):Void {
+        super();
+
+        if (stickers != null) {
+            stickerSubState = stickers;
+        }
+    }
+
 	override function create():Void {
-		GameSession.isStoryMode = false;
+		if (stickerSubState != null) {
+            persistentUpdate = persistentDraw = true;
+
+            openSubState(stickerSubState);
+            stickerSubState.degenStickers();
+        }
+
+		if (!FlxG.sound.music.playing) {
+			FlxG.sound.playMusic(Path.music('freakyMenu'), 0.5);
+		}
+
+		PlayState.isStoryMode = false;
 		WeekData.reload();
 
 		if (WeekData.weeks.length < 1) {
-			trace('ya got no weeks buddy go back lmaooo');
+			if (Constants.VERBOSE) trace('ya got no weeks buddy go back lmaooo');
 			Key.onPress(Key.back, onBack);
 			return;
 		}
@@ -124,8 +146,10 @@ class FreeplayState extends Scene {
 			return;
 		}
 
-        GameSession.songs = [songs[curSelected].name];
-		GameSession.curSong = songs[curSelected].name;
+        PlayState.songs = [songs[curSelected].name];
+		PlayState.curSong = PlayState.songs[0];
+		PlayState.isStoryMode = false;
+		PlayState.curWeek = songs[curSelected].week;
 		FlxG.switchState(new PlayState());
 	}
 
@@ -165,10 +189,10 @@ class FreeplayState extends Scene {
 
 		lastWeekDifficulties.set(songs[curSelected].week, curDifficulty);
 
-		GameSession.difficulty = difficulties[curDifficulty].name;
+		PlayState.difficulty = difficulties[curDifficulty].name;
 		diffText.text = difficulties[curDifficulty].displayName.toUpperCase();
 
-		intendedScore = Highscore.getScore(songs[curSelected].name, GameSession.difficulty);
+		intendedScore = Highscore.getScore(songs[curSelected].name, PlayState.difficulty);
 	}
 
 	function positionHighscore():Void {

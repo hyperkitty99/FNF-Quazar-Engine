@@ -8,7 +8,7 @@ class Event {
 
     public static function trigger(name:String, values:Array<EventValue>):Void {
         if (!events.exists(name) || name == null || values == null) {
-            trace('Warning: Event "$name" not found.');
+            if (Constants.VERBOSE) trace('Warning: Event "$name" not found.');
             return;
         }
 

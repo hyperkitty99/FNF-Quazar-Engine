@@ -63,5 +63,6 @@
 	],
 	"image": "daddyDearest",
 	"healthbarColor": "#AF66CE",
-	"singDuration": 6.1
+	"singDuration": 6.1,
+	"flipX": false
 }

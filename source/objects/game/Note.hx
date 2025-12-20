@@ -53,7 +53,7 @@ class Note extends NoteSprite {
 
 		if (length > 0) {
 			sustain = parent.strumline.sustains.recycle(Sustain, newSustain).setup(this);
-			sustain.height = length * (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
+			sustain.height = length * (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
 		}
 
 		noteType = NoteType.get(type);
@@ -128,11 +128,11 @@ class Note extends NoteSprite {
 				sustainLight.angle = sustain.angle;
 			}
 
-			parent.confirm(false, parent.strumline.player);
+			parent.confirm(false);
 			sustaining = true;
 			visible = false;
 		} else {
-			parent.confirm(true, parent.strumline.player);
+			parent.confirm(true);
 			kill();
 		}
 	}
@@ -140,12 +140,12 @@ class Note extends NoteSprite {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		setPosition(parent.x, parent.y - (game.conductor.time - time) * (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR) * (Data.downScroll ? -1 : 1));
+		setPosition(parent.x, parent.y - (game.conductor.time - time) * (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR) * (Data.downScroll ? -1 : 1));
 
 		sustaining ? holding(elapsed) : hitting();
 
-		var missedNote:Bool = !parent.strumline.autoHit && hittable && (game.conductor.time >= time + ((FlxG.height / camera.zoom) * 0.5) / (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR));
-		var offScreen:Bool = game.conductor.time >= time + length + ((FlxG.height / camera.zoom) * 0.5) / (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
+		var missedNote:Bool = !parent.strumline.autoHit && hittable && (game.conductor.time >= time + ((FlxG.height / camera.zoom) * 0.5) / (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR));
+		var offScreen:Bool = game.conductor.time >= time + length + ((FlxG.height / camera.zoom) * 0.5) / (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
 
 		if (missedNote && mustPress) {
 			miss();
@@ -164,7 +164,7 @@ class Note extends NoteSprite {
 		(type == 'gf' ? game.stage.gf : parent.strumline.character).holdTimer = 0;
 
 		if (sustain != null) {
-        	sustain.height = Math.max((time + length) - game.conductor.time, 0) * (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
+        	sustain.height = Math.max((time + length) - game.conductor.time, 0) * (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
 			sustain.setPosition(x + (width - sustain.width) * 0.5, Data.downScroll ? parent.y - sustain.height : parent.y);
 
 			if (parent.strumline.skinData.meta.hasSustainLights) {
@@ -188,7 +188,7 @@ class Note extends NoteSprite {
 		if (parent.strumline.player) {
 			var allowedEarlyRelease:Bool = ((time + length) - game.conductor.time) <= 125;
 
-			if (!parent.strumline.autoHit) game.rating.score += Std.int((noteType != null ? noteType.scoreGainHold : 250) * elapsed);
+			if (!parent.strumline.autoHit) game.score += Std.int((noteType != null ? noteType.scoreGainHold : 250) * elapsed);
 			game.health += healthGainHold * elapsed;
 
 			if (!parent.strumline.autoHit) {
@@ -242,7 +242,7 @@ class Note extends NoteSprite {
 
 	public function hitting():Void {
 		if (sustain != null) {
-			sustain.height = length * (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
+			sustain.height = length * (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
 			sustain.setPosition(x + (width - sustain.width) * 0.5, Data.downScroll ? y - sustain.height : y);
 		}
 
@@ -264,22 +264,22 @@ class Note extends NoteSprite {
 				if (game.ui.curStrumline.skinData.meta.hasNoteSplashes) {
 					NoteSplash.spawn(game.ui.curStrumline.strums[id]);
 				}
-				game.rating.totalHit += 1;
+				game.totalHit += 1;
 				'sick';
 			case(_ <= Constants.GOOD_WINDOW + PlayerControls.safeMS) => true:
 				scoreModifier = noteType != null ? noteType.scoreGainGood : 200;
-				game.rating.totalHit += 0.67;
+				game.totalHit += 0.67;
 				'good';
 			case(_ <= Constants.BAD_WINDOW + PlayerControls.safeMS) => true:
 				scoreModifier = noteType != null ? noteType.scoreGainBad : 100;
-				game.rating.totalHit += 0.34;
-				if (type != 'gf') game.stage.gf.checkComboDrop(game.rating.combo);
-				game.rating.combo = 0;
+				game.totalHit += 0.34;
+				if (type != 'gf') game.stage.gf.checkComboDrop(game.combo);
+				game.combo = 0;
 				'bad';
 			case(_ <= Constants.SHIT_WINDOW + PlayerControls.safeMS) => true:
 				scoreModifier = noteType != null ? noteType.scoreGainShit : 50;
-				if (type != 'gf') game.stage.gf.checkComboDrop(game.rating.combo);
-				game.rating.combo = 0;
+				if (type != 'gf') game.stage.gf.checkComboDrop(game.combo);
+				game.combo = 0;
 				'shit';
 			default:
 				'miss';
@@ -292,19 +292,19 @@ class Note extends NoteSprite {
 
 		game.ui.curStrumline.voices.volume = 1;
 
-		game.rating.combo++;
-		game.rating.totalPlayed++;
+		game.combo++;
+		game.totalPlayed++;
 
-		game.rating.recalculate();
-		game.rating.score += scoreModifier;
+		Rating.recalculate();
+		game.score += scoreModifier;
 
-		if (type != 'gf') game.stage.gf.checkCombo(game.rating.combo);
+		if (type != 'gf') game.stage.gf.checkCombo(game.combo);
 
 		Rating.create(ratingName);
 	}
 
 	public function miss(count:Bool = true):Void {
-		var prevCombo:Int = game.rating.combo;
+		var prevCombo:Int = game.combo;
 
 		if (noteType != null && count) {
 			noteType.onMiss(this);
@@ -313,18 +313,18 @@ class Note extends NoteSprite {
 		hittable = false;
 
 		if (parent.strumline.player) {
-			game.rating.totalPlayed++;
-			game.rating.recalculate();
+			game.totalPlayed++;
+			Rating.recalculate();
 
 			if (count) {
-				game.rating.misses++;
-				game.rating.score -= noteType != null ? noteType.scoreLoss : 100;
+				game.misses++;
+				game.score -= noteType != null ? noteType.scoreLoss : 100;
 
-				if (type != 'gf') game.stage.gf.checkComboDrop(game.rating.combo);
+				if (type != 'gf') game.stage.gf.checkComboDrop(game.combo);
 
-				game.rating.combo = 0;
+				game.combo = 0;
 			} else {
-				game.rating.score -= 10;
+				game.score -= 10;
 			}
 
 			game.health -= healthLoss;
@@ -338,7 +338,7 @@ class Note extends NoteSprite {
 
 		FlxG.sound.play(Path.sound('miss' + FlxG.random.int(1, 3)));
 
-		if (prevCombo >= 10 && prevCombo != game.rating.combo) {
+		if (prevCombo >= 10 && prevCombo != game.combo) {
 			Rating.create();
 		}
 	}

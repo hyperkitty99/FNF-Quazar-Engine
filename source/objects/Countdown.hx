@@ -26,7 +26,7 @@ class Countdown extends FlxSpriteGroup {
 		if (conductor.beat.cur > -4) {
 			var sprite:String = Constants.COUNTDOWN_SPRITE_NAMES[conductor.beat.cur + 3];
 
-			var graphic = Path.image('uiSkins/${GameSession.uiSkin}/$sprite');
+			var graphic = Path.image('uiSkins/${PlayState.uiSkin}/$sprite');
 			if (graphic == null) Path.image('uiSkins/default/$sprite');
 
 			var countdownItem:FlxSprite = new FlxSprite(graphic);
@@ -39,7 +39,7 @@ class Countdown extends FlxSpriteGroup {
 
 		var sound:String = Constants.COUNTDOWN_SOUND_NAMES[conductor.beat.cur + 4];
 
-		var audio = Path.sound('uiSkins/${GameSession.uiSkin}/$sound');
+		var audio = Path.sound('uiSkins/${PlayState.uiSkin}/$sound');
 		if (audio == null) Path.sound('uiSkins/default/$sound');
 
 		FlxG.sound.play(audio);

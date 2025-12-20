@@ -52,19 +52,19 @@ class ChartEditor extends MusicScene {
 
 	public function new(chart:Chart = null):Void {
 		super();
-		ChartEditor.chart = (GameSession.chartingMode ? ChartEditor.chart : chart) ?? Path.chart('Test', 'normal');
+		ChartEditor.chart = (PlayState.chartingMode ? ChartEditor.chart : chart) ?? Path.chart('Test', 'normal');
 	}
 
 	override public function create():Void {
 		super.create();
 
-		GameSession.chartingMode = true;
+		PlayState.chartingMode = true;
 
 		bgColor = 0xFF252525;
 
-		inst = Path.song('Inst', chart.song);
-		voices = Path.song('Voices-Player', chart.song);
-		voicesOpponent = Path.song('Voices-Opponent', chart.song);
+		inst = Path.song('Inst', chart.song.toLowerCase());
+		voices = Path.song('Voices-Player', chart.song.toLowerCase());
+		voicesOpponent = Path.song('Voices-Opponent', chart.song.toLowerCase());
 
 		conductor.paused = true;
 		conductor.bpm = chart.bpm;
@@ -158,7 +158,7 @@ class ChartEditor extends MusicScene {
 
 		tab_group.add(new FlxButton(15, 15, 'Save', saveChart));
 		tab_group.add(new FlxButton(110, 15, 'Reload Chart', () -> {
-			ChartEditor.chart = Path.chart(chart.song, GameSession.difficulty);
+			ChartEditor.chart = Path.chart(chart.song, PlayState.difficulty);
 			FlxG.switchState(new ChartEditor());
 		}));
 

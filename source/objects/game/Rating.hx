@@ -15,11 +15,42 @@ class Rating {
 		return new Rating(name, percent);
 	}
 
+	public static function saveWeekScore(score:Int):Void {
+		if (PlayState.botplay || PlayState.practiceMode) return;
+		
+		Data.completedWeeks.set(WeekData.weeks[PlayState.curWeek], true);
+		Highscore.saveWeekScore(WeekData.weeks[PlayState.curWeek], PlayState.difficulty, PlayState.weekScore == 0 ? score : PlayState.weekScore);
+		FlxG.save.data.completedWeeks = Data.completedWeeks;
+		FlxG.save.flush();
+
+		PlayState.weekScore = 0;
+	}
+
+	public static function saveFreeplayScore(score:Int, percent:Float):Void {
+		if (PlayState.botplay || PlayState.practiceMode) return;
+		Highscore.saveScore(PlayState.curSong, PlayState.difficulty, score, percent);
+	}
+
+	public static function recalculate():Void {
+		if (game.totalPlayed == 0) return;
+
+		game.percent = FlxMath.bound(game.totalHit / game.totalPlayed, 0, 1);
+
+		game.curRating = game.ratings[game.ratings.length - 1].name;
+
+		for (rat in game.ratings) {
+			if (game.percent < rat.percent) {
+				game.curRating = rat.name;
+				break;
+			}
+    	}
+	}
+
 	public static function create(ratingName:String = null):Void {
 		zIndexCounter++;
 
 		if (ratingName != null) {
-			var ratingGraphic = Path.image('uiSkins/${GameSession.uiSkin}/$ratingName');
+			var ratingGraphic = Path.image('uiSkins/${PlayState.uiSkin}/$ratingName');
 			if (ratingGraphic == null) Path.image('uiSkins/default/$ratingName');
 
 			var rating:FlxSprite = game.ui.comboGroup.recycle(FlxSprite, newRating);	
@@ -35,12 +66,12 @@ class Rating {
 			FlxTween.num(1, 0, 0.2, {type: ONESHOT, onComplete: onTweenComplete.bind(rating), startDelay: game.beatLength * 0.001}, updateAlpha.bind(rating));
 		}
 
-		if (game.rating.combo == 0 || game.rating.combo >= 10) {
-			var numArr:Array<String> = Std.string(game.rating.combo).lpad('0', 3).split('');
+		if (game.combo == 0 || game.combo >= 10) {
+			var numArr:Array<String> = Std.string(game.combo).lpad('0', 3).split('');
 			numArr.reverse();
 
 			for (i => num in numArr) {
-				var numGraphic = Path.image('uiSkins/${GameSession.uiSkin}/num$num');
+				var numGraphic = Path.image('uiSkins/${PlayState.uiSkin}/num$num');
 				if (numGraphic == null) Path.image('uiSkins/default/num$num');
 
 				var comboNum:FlxSprite = game.ui.comboGroup.recycle(FlxSprite, newRating);

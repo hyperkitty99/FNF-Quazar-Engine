@@ -30,6 +30,10 @@ class SoundTray extends FlxSoundTray {
         volumeUpSound = 'Volup';
         volumeDownSound = 'Voldown';
         volumeMaxSound = 'VolMAX';
+
+        if (FlxG.sound.muted || FlxG.sound.volume == 0) {
+            moveTrayMakeVisible();
+        }
     }
 
     function addBitmap(path:String, x:Float = 0, y:Float = 0, alpha:Float = 1):Bitmap {

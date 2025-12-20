@@ -21,8 +21,6 @@ class PauseSubState extends SubScene {
 	var changingDifficulty:Bool = false;
 
 	override function create():Void {
-		super.create();
-
 		pauseMusic = new FlxSound().loadEmbedded(Path.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length * 0.5)));
@@ -37,12 +35,12 @@ class PauseSubState extends SubScene {
 
 		FlxTween.num(0, 0.6, 0.8, {ease: FlxEase.quartOut}, setAlpha);
 
-		var metadataSong:FlxText = new FlxText(20, 15, FlxG.width - 40, Song.nameToDisplayName(GameSession.curSong));
-        metadataArtist = new FlxText(20, metadataSong.y + 32, FlxG.width - 40, 'Artist: ${Song.nameToArtist(GameSession.curSong)}');
-    	var metadataDifficulty:FlxText = new FlxText(20, metadataArtist.y + 32, FlxG.width - 40, 'Difficulty: ${Difficulty.nameToDisplayName(GameSession.difficulty, GameSession.curSong)}');
-    	metadataDeaths = new FlxText(20, metadataDifficulty.y + 32, FlxG.width - 40, '${GameSession.blueballs} Blue Balls');
+		var metadataSong:FlxText = new FlxText(20, 15, FlxG.width - 40, Song.nameToDisplayName(PlayState.curSong));
+        metadataArtist = new FlxText(20, metadataSong.y + 32, FlxG.width - 40, 'Artist: ${Song.nameToArtist(PlayState.curSong)}');
+    	var metadataDifficulty:FlxText = new FlxText(20, metadataArtist.y + 32, FlxG.width - 40, 'Difficulty: ${Difficulty.nameToDisplayName(PlayState.difficulty, PlayState.curSong)}');
+    	metadataDeaths = new FlxText(20, metadataDifficulty.y + 32, FlxG.width - 40, '${PlayState.blueballs} Blue Balls');
 		metadataPractice = new FlxText(20, metadataDeaths.y + 32, FlxG.width - 40, 'PRACTICE MODE');
-		metadataPractice.visible = GameSession.practiceMode;
+		metadataPractice.visible = PlayState.practiceMode;
 
 		for (text in [metadataSong, metadataArtist, metadataDifficulty, metadataDeaths, metadataPractice]) {
 			text.setFormat(Path.font('vcr.ttf'), 32, FlxColor.WHITE, FlxTextAlign.RIGHT);
@@ -59,13 +57,15 @@ class PauseSubState extends SubScene {
     	}
 
 		generateElements();
+		changeItem();
+
+		super.create();
 
 		Key.onPress(Key.accept, onAccept);
 		Key.onPress(Key.back, close);
 		Key.onPress(Key.up, changeItem.bind(-1));
 		Key.onPress(Key.down, changeItem.bind(1));
 
-		changeItem();
 	}
 
 	function generateElements():Void {
@@ -90,12 +90,12 @@ class PauseSubState extends SubScene {
 	var charterFadeTween:FlxTween;
 
 	function changeToCharter(_:FlxTween):Void {
-		metadataArtist.text = 'Charter: ${Song.nameToCharter(GameSession.curSong)}';
+		metadataArtist.text = 'Charter: ${Song.nameToCharter(PlayState.curSong)}';
 		FlxTween.num(metadataArtist.alpha, 1, 0.75, {ease: FlxEase.quartOut, onComplete: startArtistTimer}, updateAlpha.bind(metadataArtist));
 	}
 
 	function changeToArtist(_:FlxTween):Void {
-		metadataArtist.text = 'Artist: ${Song.nameToArtist(GameSession.curSong)}';
+		metadataArtist.text = 'Artist: ${Song.nameToArtist(PlayState.curSong)}';
 		FlxTween.num(metadataArtist.alpha, 1, 0.75, {ease: FlxEase.quartOut, onComplete: startCharterTimer}, updateAlpha.bind(metadataArtist));
 	}
 
@@ -147,7 +147,7 @@ class PauseSubState extends SubScene {
 				return;
 			}
 
-			GameSession.difficulty = Difficulty.displayNameToName(menuItems[curSelected], GameSession.curSong);
+			PlayState.difficulty = Difficulty.displayNameToName(menuItems[curSelected], PlayState.curSong);
 			FlxG.resetState();
 
 			return;
@@ -155,6 +155,7 @@ class PauseSubState extends SubScene {
 
 		switch menuItems[curSelected] {
 			case 'Resume':
+				if (game != null) game.unpauseSustainWindow = 0.05;
 				close();
 			case 'Restart Song':
 				FlxG.resetState();
@@ -162,7 +163,7 @@ class PauseSubState extends SubScene {
 				changingDifficulty = true;
 				menuItems = [];
 
-				for (diff in Song.get(GameSession.curSong).diff) {
+				for (diff in Song.get(PlayState.curSong).diff) {
             		menuItems.push(diff.displayName);
         		}
 
@@ -171,13 +172,18 @@ class PauseSubState extends SubScene {
 				generateElements();
 				changeItem();
 			case 'Toggle Practice Mode':
-				GameSession.practiceMode = !GameSession.practiceMode;
-				metadataPractice.visible = GameSession.practiceMode;
+				PlayState.practiceMode = !PlayState.practiceMode;
+				metadataPractice.visible = PlayState.practiceMode;
 			case 'Exit to menu':
-				FlxG.sound.playMusic(Path.music('freakyMenu'), 0.5);
-				FlxG.switchState(GameSession.isStoryMode ? new StoryMenuState() : new FreeplayState());
+				Controls.block = true;
 
-				GameSession.resetProperties();
+				StickerSubState.preload(PlayState.curSong, game.stage.bf.character);
+
+				if (PlayState.isStoryMode) {
+					openSubState(new StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+				} else {
+					openSubState(new StickerSubState(null, (sticker) -> new FreeplayState(sticker)));
+				}
 		}
 	}
 

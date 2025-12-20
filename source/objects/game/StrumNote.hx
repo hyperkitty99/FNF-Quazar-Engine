@@ -2,7 +2,6 @@ package objects.game;
 
 class StrumNote extends NoteSprite {
 	public var autoReset:Bool = true;
-	public var player:Bool = false;
 
 	public function new(data:Int = 0, line:Strumline):Void {
 		super(data, line);
@@ -24,14 +23,13 @@ class StrumNote extends NoteSprite {
 
 	function onFinish(name:String):Void {
 		if (name == 'confirm $dir' && autoReset) {
-			player ? press() : resetAnim();
+			resetAnim();
 		}
 	}
 
-	public function confirm(autoReset:Bool = true, player:Bool = false):Void {
+	public function confirm(autoReset:Bool = true):Void {
 		playAnim('confirm $dir', true);
 		this.autoReset = autoReset;
-		this.player = player;
 	}
 
 	public function press():Void {

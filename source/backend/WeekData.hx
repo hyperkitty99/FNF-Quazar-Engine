@@ -98,7 +98,7 @@ class WeekData {
                         song.charter = songMeta.charter;
                     }
                 } catch(e:Dynamic) {
-                    trace('Error loading metadata for ${song.name}: $e');
+                    if (Constants.VERBOSE) trace('Error loading metadata for ${song.name}: $e');
                 }
             }
         }
@@ -112,7 +112,7 @@ class WeekData {
 
 		var weekFile:WeekData = new WeekData(week);
 
-		if ((GameSession.isStoryMode && !weekFile.hideStory) || (!GameSession.isStoryMode && !weekFile.hideFreeplay)) {
+		if ((PlayState.isStoryMode && !weekFile.hideStory) || (!PlayState.isStoryMode && !weekFile.hideFreeplay)) {
 			loadedWeeks.set(weekToCheck, weekFile);
 			weeks.push(weekToCheck);
 		}
@@ -124,11 +124,11 @@ class WeekData {
 	}
 
     public static function getName(num:Int = null):String {
-		return WeekData.weeks[num == null ? GameSession.curWeek : num];
+		return WeekData.weeks[num == null ? PlayState.curWeek : num];
 	}
 
 	public static function getCurrent(num:Int = null):WeekData {
-		return WeekData.loadedWeeks[WeekData.weeks[num == null ? GameSession.curWeek : num]];
+		return WeekData.loadedWeeks[WeekData.weeks[num == null ? PlayState.curWeek : num]];
 	}
 
     public static function isLocked(name:String):Bool {

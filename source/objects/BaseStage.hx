@@ -3,7 +3,6 @@ package objects;
 import flixel.group.FlxContainer;
 
 class BaseStage extends FlxContainer {
-    public var characterMap:Map<String, Character> = new Map();
     public var props:Map<String, FlxSprite> = new Map();
 
     public var gf:Character;

@@ -56,7 +56,7 @@ class Init extends FlxState {
 
 		super.create();
 
-		#if !RELEASE_BUILD Logger.init(); #end
+		if (Constants.VERBOSE) Logger.init();
 	}
 
 	function onError(e:UncaughtErrorEvent):Void {

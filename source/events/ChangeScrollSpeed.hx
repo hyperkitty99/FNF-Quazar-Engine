@@ -15,10 +15,10 @@ class ChangeScrollSpeed implements BaseEvent {
         var ease:String = params.string('ease');
         var easeDir:String = params.string('easeDir');
 
-        duration > 0 ? FlxTween.num(game.song.scrollSpeed, speed, duration, {ease: Util.getEase(ease + easeDir)}, setScrollSpeed) : game.song.scrollSpeed = speed;
+        duration > 0 ? FlxTween.num(game.scrollSpeed, speed, duration, {ease: Util.getEase(ease + easeDir)}, setScrollSpeed) : game.scrollSpeed = speed;
     }
 
     function setScrollSpeed(value:Float):Void {
-        game.song.scrollSpeed = value;
+        game.scrollSpeed = value;
     }
 }

@@ -95,5 +95,6 @@
 	],
 	"image": "BOYFRIEND",
 	"healthbarColor": "#31B0D1",
-	"singDuration": 8
+	"singDuration": 8,
+	"flipX": true
 }

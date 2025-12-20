@@ -4,6 +4,8 @@ class Constants {
     public static final NOTEBIND_NAMES:Array<String> = ['left_note', 'down_note', 'up_note', 'right_note'];
     public static final DIRECTION:Array<String> = ['left', 'down', 'up', 'right'];
 
+	public static final VERBOSE:Bool = false;
+
     public static final SICK_WINDOW:Float = 45;
     public static final GOOD_WINDOW:Float = 90;
     public static final BAD_WINDOW:Float = 135;
@@ -13,6 +15,10 @@ class Constants {
     public static final COUNTDOWN_SOUND_NAMES:Array<String> = ['three', 'two', 'one', 'go'];
 
 	public static final SOUND_TRAY_CLIP_VALUES:Array<Int> = [20, 39, 55, 74, 92, 114, 137, 159, 179, 203];
+
+	public static final CLICK_SOUNDS:Array<String> = [
+        for (i in 1...8) 'keyClick$i'
+    ];
 
     public static final WEEK_LOCK_PAD:Int = 4;
 

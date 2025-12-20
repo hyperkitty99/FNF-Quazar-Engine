@@ -75,5 +75,6 @@
 		}
 	],
 	"image": "GF_assets",
-	"healthbarColors": "a5004d"
+	"healthbarColors": "a5004d",
+	"flipX": false
 }

@@ -35,6 +35,8 @@ class Character extends FlxSprite {
 	public var danceEveryNumBeats:Int = 2;
 	public var holdTimer:Float = 0;
 
+	public var ogFlipX:Bool = false;
+
 	public var speed:Float = 1;
 
 	public var _editor:Bool = false;
@@ -63,8 +65,10 @@ class Character extends FlxSprite {
 		var json:CharacterData = Path.character(character);
 
 		antialiasing = json.antialiasing ?? Data.antialiasing;
-		flipX = (json.flipX == player) ?? false;
+		flipX = (json.flipX != player) ?? false;
 		flipY = json.flipY ?? false;
+
+		ogFlipX = (json.flipX == true);
 
 		healthbarColor = json.healthbarColor ?? '31b0d1';
 		cameraPosition = json.cameraPosition ?? [0, 0];

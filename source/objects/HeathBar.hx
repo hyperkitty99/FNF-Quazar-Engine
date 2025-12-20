@@ -14,7 +14,7 @@ class HealthBar extends FlxSpriteGroup {
 
 		this.opponentSide = opponentSide;
 
-		var graphic = Path.image('uiSkins/${GameSession.uiSkin}/healthBar');
+		var graphic = Path.image('uiSkins/${PlayState.uiSkin}/healthBar');
 		if (graphic == null) Path.image('uiSkins/default/healthBar');
 
 		add(playerBar = new FlxSprite(graphic));

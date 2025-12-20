@@ -32,7 +32,7 @@ import moonchart.formats.fnf.legacy.FNFPsych;
 
 	public static function get(key:String, ?pos:PosInfos):String {
 		if (!FileSystem.exists('assets/$key')) {
-			trace('$key could not be found: $pos');
+			if (Constants.VERBOSE) trace('$key could not be found: $pos');
 			return null;
 		}
 

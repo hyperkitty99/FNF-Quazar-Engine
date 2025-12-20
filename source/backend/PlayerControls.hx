@@ -1,6 +1,5 @@
 package backend;
 
-import managers.RatingManager;
 import substates.GameOverSubState;
 import substates.PauseSubState;
 
@@ -19,26 +18,26 @@ class PlayerControls {
 	}
 
 	static function onChartEditor():Void {
-		FlxG.switchState(new ChartEditor(game.song.chart));
+		FlxG.switchState(new ChartEditor(game.chart));
 	}
 
 	static function onPause():Void {
-		if (game.song.ended) return;
+		if (game.ended) return;
 		game.openSubState(new PauseSubState());
 	}
 
 	static function onReset():Void {
-		if (game.song.ended || !Data.reset) return;
+		if (game.ended || !Data.reset) return;
 		game.openSubState(new GameOverSubState(game.ui.curStrumline.character));
 	}
 
 	static function onRelease(id:Int):Void {
-		if (game.song.ended || GameSession.botplay) return;
+		if (game.ended || PlayState.botplay) return;
 		game.ui.curStrumline.strums[id].resetAnim();
 	}
 
 	static function onPress(id:Int):Void {
-		if (game.song.ended || GameSession.botplay) return;
+		if (game.ended || PlayState.botplay) return;
 
 		for (note in game.ui.curStrumline.notes.members) {
 			if (note?.exists && note.alive && note.data % Constants.NOTEBIND_NAMES.length == id && note.hittable) {
@@ -55,10 +54,10 @@ class PlayerControls {
 		if (!Data.ghostTapping) {
 			game.ui.curStrumline.voices.volume = 0;
 
-			game.rating.totalPlayed++;
-			game.rating.recalculate();
+			game.totalPlayed++;
+			Rating.recalculate();
 
-			game.rating.score -= 10;
+			game.score -= 10;
 			game.health -= 0.025;
 
 			var char = game.ui.curStrumline.character;

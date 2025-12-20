@@ -80,7 +80,7 @@ class Util {
 
 	public static function getCharacter(character:String):Character {
 		if (game == null) {
-			trace('Game is not initialized yet');
+			if (Constants.VERBOSE) trace('Game is not initialized yet');
 			return null;
 		}
 
@@ -94,7 +94,7 @@ class Util {
 
 	public static function getCharacterTarget(character:Character):String {
 		if (game == null) {
-			trace('Game is not initialized yet');
+			if (Constants.VERBOSE) trace('Game is not initialized yet');
 			return null;
 		}
 
@@ -108,7 +108,7 @@ class Util {
 
 	public static function getCamera(camera:String):FlxCamera {
 		if (game == null) {
-			trace('Game is not initialized yet');
+			if (Constants.VERBOSE) trace('Game is not initialized yet');
 			return null;
 		}
 

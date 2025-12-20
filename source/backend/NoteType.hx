@@ -7,7 +7,7 @@ class NoteType {
 
     public static function get(name:String):BaseNote {
         if (!noteTypes.exists(name) || name == null) {
-            trace('Warning: Note type "$name" not found.');
+            if (Constants.VERBOSE) trace('Warning: Note type "$name" not found.');
             return null;
         }
 

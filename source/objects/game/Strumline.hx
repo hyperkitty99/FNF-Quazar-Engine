@@ -126,7 +126,7 @@ class Strumline extends FlxSpriteGroup {
 
 	function lookAheadMS():Float {
 		var screenHeight:Float = FlxG.height / camera.zoom;
-		return game.conductor.time + (screenHeight * Constants.LOOK_AHEAD_FACTOR) / (game.song.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
+		return game.conductor.time + (screenHeight * Constants.LOOK_AHEAD_FACTOR) / (game.scrollSpeed * Constants.SCROLLSPEED_FACTOR);
 	}
 
 	function newNote():Note {

@@ -79,7 +79,7 @@ class WeekCharacter extends FlxSprite {
             dance();
 
         } catch (e:Dynamic) {
-            trace('Failed to load character "$character": $e');
+            if (Constants.VERBOSE) trace('Failed to load character "$character": $e');
             visible = false;
         }
     }

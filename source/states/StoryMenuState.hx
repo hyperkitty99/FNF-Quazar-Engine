@@ -3,6 +3,7 @@ package states;
 import objects.story.WeekDifficulty;
 import objects.story.WeekCharacter;
 import objects.story.WeekTitle;
+import substates.StickerSubState;
 
 class StoryMenuState extends MusicScene {
     static var curDifficulty:Int = 1;
@@ -25,12 +26,33 @@ class StoryMenuState extends MusicScene {
 
     var songTimer:FlxTimer = new FlxTimer();
 
+    var stickerSubState:StickerSubState;
+
+    public function new(?stickers:StickerSubState = null):Void {
+        super();
+
+        if (stickers != null) {
+            stickerSubState = stickers;
+        }
+    }
+
     override function create():Void {
-		Path.clearStoredMemory();
+        if (stickerSubState != null) {
+            persistentUpdate = persistentDraw = true;
+
+            openSubState(stickerSubState);
+            stickerSubState.degenStickers();
+        } else {
+            Path.clearStoredMemory();
+        }
+
+        if (!FlxG.sound.music.playing) {
+			FlxG.sound.playMusic(Path.music('freakyMenu'), 0.5);
+		}
 
         conductor.bpm = TitleState.metadata.bpm;
 
-        GameSession.isStoryMode = true;
+        PlayState.isStoryMode = true;
 		WeekData.reload();
 
         for (i => week in WeekData.weeks) {
@@ -116,12 +138,12 @@ class StoryMenuState extends MusicScene {
         FlxG.sound.play(Path.sound('confirm'), 0.7);
         characters[1].playAnim('confirm', true);
 
-		GameSession.songs = [for (song in WeekData.getCurrent(curWeek).songs) song.name];
-        GameSession.curSong = WeekData.getCurrent(curWeek).songs[0].name;
-		GameSession.isStoryMode = true;
-        GameSession.curWeek = curWeek;
+		PlayState.songs = [for (song in WeekData.getCurrent(curWeek).songs) song.name];
+        PlayState.curSong = PlayState.songs[0];
+		PlayState.isStoryMode = true;
+        PlayState.curWeek = curWeek;
 
-		GameSession.weekScore = 0;
+		PlayState.weekScore = 0;
 
         songTimer.start(1, startSong);
     }
@@ -190,10 +212,10 @@ class StoryMenuState extends MusicScene {
         var week = WeekData.getCurrent(curWeek);
 
 		curDifficulty = (curDifficulty + dir + week.difficulties.length) % week.difficulties.length;
-		GameSession.difficulty = week.difficulties[curDifficulty].name;
+		PlayState.difficulty = week.difficulties[curDifficulty].name;
 
-        intendedScore = Highscore.getWeekScore(WeekData.weeks[curWeek], GameSession.difficulty);
+        intendedScore = Highscore.getWeekScore(WeekData.weeks[curWeek], PlayState.difficulty);
 
-        difficultySprite.updateGraphic(leftArrow.x, leftArrow.y, GameSession.difficulty);
+        difficultySprite.updateGraphic(leftArrow.x, leftArrow.y, PlayState.difficulty);
 	}
 }
