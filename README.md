@@ -1,4 +1,6 @@
 <!--This is the markdown readme. View the pretty format on the webpage-->
+> [!NOTE]
+> I don't work on this project anymore because the code architecture is horrible. I am working on a Godot port as of now though, so keep an eye out for that.
 
 # Friday Night Funkin'- Quazar Engine
 Quazar Engine is a light weight engine built from the ground up, taylored for source modding.
